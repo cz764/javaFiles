@@ -1,4 +1,6 @@
 /*
+ * Name: Chen Zhu
+ * UID: N12166205
  * Date: 09/18/2013
  * Assignment: #01
  * Summary: When receive the user input of two time values, compute the difference between them.

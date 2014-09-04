@@ -1,0 +1,115 @@
+package desserts;
+/* Name: Chen Zhu
+ * UID: N12166205
+ * Date: 11/15/2013
+ * Assignment: #7
+ * Summary: Checkout class to simulate the checkout system
+ * Solution: use an array to store DessertItems
+ * Assumptions: 
+ * 1. the array size 100 is sufficiently large to store all items, which means numberOfItems is impossible to exceed 100,
+ * 	  and we do not need to check before enterItem()
+ */
+
+public class Checkout {
+	private DessertItem[] myDessertItems;
+	private int numberOfItems;
+	private final int RECEIPT_WIDTH = 30;
+	
+	public Checkout() {
+		myDessertItems = new DessertItem[100];
+		numberOfItems = 0;
+	}
+	
+	public int numberOfItems() {
+		return numberOfItems;
+	}
+	
+	public void enterItem(DessertItem item) {
+		this.myDessertItems[numberOfItems] = item;
+		numberOfItems++;
+	}
+	
+	public void clear() {
+		for(int i = 0; i < numberOfItems; i++)
+			this.myDessertItems[i] = null;
+		numberOfItems = 0;
+	}
+	
+	public int totalCost() {
+		int sum = 0;
+		for(int i = 0; i < numberOfItems; i++) 
+			sum += myDessertItems[i].getCost(); 
+		return sum;
+	}
+	
+	public int totalTax() {
+		return (int)Math.round(this.totalCost() * DessertShoppe.TAX_RATE / 100.00);
+	}
+	
+	public String toString() {
+		String s = "";		// receipt
+		
+		
+		s += "    " + DessertShoppe.STORE_NAME + "\n";
+		s += "    " + "--------------------" + "\n";
+		
+		for(int j = 0; j < numberOfItems; j++){
+		
+			String l = myDessertItems[j].getName();		// items of every line
+			
+//			String item = myDessertItems[j].getClass().toString().substring(6);		// get the item category
+			
+			String p = DessertShoppe.cents2dollarsAndCents(myDessertItems[j].getCost());	// price of every item
+			if (p.length() > DessertShoppe.COST_WIDTH)		// verify the price is within length
+				p = p.substring(0, DessertShoppe.COST_WIDTH);
+			
+			if (myDessertItems[j] instanceof IceCream) {		// print if ice cream
+				while(l.length() < RECEIPT_WIDTH - p.length()){
+					l += " ";
+				}
+				s += l + p + "\n";
+			}
+			else if (myDessertItems[j] instanceof Sundae) {		// print if Sundae
+				
+				s += ((Sundae)myDessertItems[j]).getTopping() + " Sundae with\n";
+				
+				while(l.length() < RECEIPT_WIDTH - p.length()){
+					l += " ";
+				}
+				s += l + p + "\n";
+			}
+			else if (myDessertItems[j] instanceof Candy){		// print if Candy
+				s += ((Candy) myDessertItems[j]).getWeight() + " lbs @ " + 
+						DessertShoppe.cents2dollarsAndCents(((Candy) myDessertItems[j]).getPricePerPound()) + " /lb.\n";
+				
+				while(l.length() < RECEIPT_WIDTH - p.length()){
+					l += " ";
+				}
+				s += l + p + "\n";	
+			}
+			else {		// print if Cookie
+				s += ((Cookie)myDessertItems[j]).getNumber() + " @ " + 
+						DessertShoppe.cents2dollarsAndCents(((Cookie)myDessertItems[j]).getPricePerDozen()) + " /dz\n";
+				
+				while(l.length() < RECEIPT_WIDTH - p.length()){
+					l += " ";
+				}
+				s += l + p + "\n";			
+			}	
+		}
+		
+		String line = "\nTax";		
+		String tax = DessertShoppe.cents2dollarsAndCents(this.totalTax());	// print tax
+		while(line.length() <= RECEIPT_WIDTH - tax.length())
+			line += " ";
+		s += line + tax;
+		
+		String totalCost = DessertShoppe.cents2dollarsAndCents(this.totalCost() + this.totalTax());	// print total cost
+		line = "\nTotal Cost";
+		while(line.length() <= RECEIPT_WIDTH - totalCost.length())
+			line += " ";
+		s += line + totalCost;
+	
+		return s;
+	}
+}

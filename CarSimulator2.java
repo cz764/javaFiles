@@ -2,9 +2,10 @@
  * Name: Chen Zhu
  * UID: N12166205
  * Date: 09/25/2013
- * Assignment: #3
- * Summary: Simulate a car that can turn on/off the ignition, and move.
- * Solution: 6 methods: getRandomPosition is used to generate an initial random position of a car;
+ * Assignment: #4
+ * Summary: Simulate 10 car that can turn on/off the ignition, and move.
+ * Solution: we use arrays to store car properties.(e.g. ignisionState, color...)
+ * 			6 methods: getRandomPosition is used to generate an initial random position of a car;
  * 			colorAssignment is used to assign random color to the car;
  * 			changeIgnitionState is used to turn on/off car ignition;
  * 			moveCarHorizontally/ moveCarVertically are used to move car horizontally and vertically;
@@ -13,69 +14,78 @@
 
 import java.util.Scanner;
 
-public class CarSimulator {
+public class CarSimulator2 {
 
 	public static void main(String[] args) {
 		
 		Scanner input = new Scanner(System.in);
 		
-		// Set initial ignition to false
-		boolean ignitionState = false;
+		// Set initial ignition states to false
+		boolean[] ignitionStates = new boolean[ 10 ];
 		
-		// Set random position
-		int x = getRandomPosition(), y = getRandomPosition();
+		// Set random positions
+		int[] x = new int[ 10 ];
+		for (int i = 0; i < x.length; i++)  // get random position assigned to array x
+			x[ i ] = getRandomPosition();
+				
+		int[] y = new int[ 10 ];
+		for (int i = 0; i < y.length; i++)  // get random position assigned to array y
+			y[ i ] = getRandomPosition();
 		
-		// Set a random color
-		char carColor = colorAssignment();
+		// Set random colors
+		char[] carColor = new char[ 10 ];
+		for (int i = 0; i < carColor.length; i++)
+			carColor[ i ] = colorAssignment();
 		
-		printCarState(ignitionState, carColor, x, y);
 		
 		// Set initial choice not equals 'q'
-		char choice = 'a';
+		int choice = 0;
 		
-		while ( choice != 'Q'){
+		while ( choice != 3 ){
 			
 			// Prompt to the user next steps and verify
-			System.out.println("What would you like to do?");
-			System.out.print(" 1: turn the ignition on/off \n 2: change the position of car\n q: quit this program");
-			choice = input.next().toUpperCase().charAt(0); // get the user choice
-		
+			System.out.println("What would you like to use next(1 - 10) cars?");
+			int num = input.nextInt();  // get the number of car
+			int index = num -1;  // get the correct index
+			
+			System.out.print(" What would you like to do next?\n1: turn the ignition on/off \n"
+					+ "2: change the position of car\n3: quit this program");
+			choice = input.nextInt(); // get the user choice
+			
 			// Get user's choice and continue each step
 			switch (choice) {
 			
 			// Turn on/off ignition
-			case '1':
-				ignitionState = changeIgnitionState(ignitionState);
-				printCarState(ignitionState, carColor, x, y);
+			case 1:
+				ignitionStates[ index ] = changeIgnitionState(ignitionStates[ index ]);
+				printCarState(num, ignitionStates[ index ], carColor[ index ], x[ index ], y[ index ]);
 				break;
 			
 			// Get & verify direction and enter each method
-			case '2':
+			case 2:
 				System.out.println("\nIn which direction would you like to move the car?\nH: horizontal\nV: vertical");
 				char direction = input.next().toUpperCase().charAt(0);
 				
 				if (direction == 'H'){
-					x = moveCarHorizontally(ignitionState, x);
-					printCarState(ignitionState, carColor, x, y);
+					x[ index ] = moveCarHorizontally(ignitionStates[ index ], x[ index ]);
+					printCarState(num, ignitionStates[ index ], carColor[ index ], x[ index ], y[ index ]);
 				}
 				
 				else if (direction == 'V'){
-					y = moveCarVertically(ignitionState, y);
-					printCarState(ignitionState, carColor, x, y);
+					y[ index ] = moveCarVertically(ignitionStates[ index ], y[ index ]);
+					printCarState(num, ignitionStates[ index ], carColor[ index ], x[ index ], y[ index ]);
 				}
 				else System.out.println("Invalid direction!\n");
 					
 				break;
 				
-			case 'Q':
+			case 3:
 				break;
 			
 			default:
 				System.out.println("\nYou entered an invalid input!");
 			}
-
-		}
-		
+		}		
 	}
 	
 	// getRandomPosition is used to get a random number as car position
@@ -94,8 +104,7 @@ public class CarSimulator {
 	
 	// changeIgnitionState is used to change ignition state
 	public static boolean changeIgnitionState(boolean state){
-		if (state == true) return false;
-		else return true;
+		return ( !state );
 	}
 	
 	// moveCarHorizontally is used to move car to a horizontal position
@@ -146,7 +155,7 @@ public class CarSimulator {
 	}
 	
 	// printCarState method is used to print car state
-	public static void printCarState(boolean ignitionState, char carColor, int posHorizontal, int posVertical){
+	public static void printCarState(int num, boolean ignitionState, char carColor, int posHorizontal, int posVertical){
 		
 		// get the ignition state
 		String igState = "";
@@ -175,7 +184,7 @@ public class CarSimulator {
 			
 		}
 		
-		System.out.println("\nCar Information");
+		System.out.println("\nCar" + num + " Information");
 		System.out.print("Color: " + color + "\n" + "Ignition: " + igState + "\n" + "Location: " + "( " + posHorizontal +
 				" , " + posVertical + " )\n");
 		
